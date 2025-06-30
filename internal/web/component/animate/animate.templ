@@ -1,0 +1,19 @@
+package animate
+
+type AnimateProps struct {
+	Animation string
+	Repeat    bool
+}
+
+templ Animate(p AnimateProps) {
+	<div
+		x-data="{intersect:false}"
+		x-intersect:enter="intersect=true"
+		if p.Repeat {
+			x-intersect:leave="intersect=false"
+		}
+		:class={ "intersect ? '" + p.Animation + "':'opacity-0'" }
+	>
+		{ children... }
+	</div>
+}

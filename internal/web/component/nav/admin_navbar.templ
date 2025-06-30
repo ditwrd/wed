@@ -1,0 +1,28 @@
+package nav
+
+import (
+	"github.com/ditwrd/wed/internal/web/component/icon"
+	"github.com/ditwrd/wed/internal/web/modules"
+)
+
+// AdminNavBar creates the navigation bar used in the admin pages
+templ AdminNavBar() {
+	@Bar() {
+		{{
+		buttons := []struct {
+			Href string
+			Icon templ.Component
+		}{
+			{"/admin", icon.LayoutDashboard()},
+			{"/", icon.House()},
+			{"/admin/logout", icon.LogOut()},
+		}
+		}}
+		for _, navButton := range buttons {
+			@Button(navButton.Href) {
+				@navButton.Icon
+			}
+		}
+		@modules.ThemeSwitcher()
+	}
+}

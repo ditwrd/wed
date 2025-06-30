@@ -1,0 +1,63 @@
+package page
+
+import (
+	"github.com/ditwrd/wed/internal/web/component/card"
+	"github.com/ditwrd/wed/internal/web/component/divider"
+	"github.com/ditwrd/wed/internal/web/component/scroll"
+)
+
+type WelcomeSectionProps struct {
+	Date string `mapstructure:"date"`
+	Name string `mapstructure:"name"`
+}
+
+templ WelcomeSection(p WelcomeSectionProps, guestName string) {
+	@scroll.Section(
+		scroll.SectionProps{
+			ID:    "welcome",
+			Class: "bg-gradient-to-b from-rose-100 dark:from-primary to-background",
+		},
+	) {
+		<div class="absolute top-8 left-1/2 transform -translate-x-1/2">
+			<div class="w-16 h-0.5 bg-primary"></div>
+		</div>
+		@card.Card(card.Props{
+			Class: "flex flex-col justify-center text-center items-center",
+		}) {
+			@card.Content(card.ContentProps{
+				Class: "text-center space-y-8 max-w-sm",
+			}) {
+				<div class="space-y-2">
+					<p class="text-sm text-primary uppercase font-medium tracking-wider animate-fade-down animate-once animate-ease-in-out">
+						Save the Date
+					</p>
+					<p class="text-lg animate-fade-down animate-once animate-ease-in-out">
+						{ p.Date }
+					</p>
+				</div>
+				<div class="space-y-4 flex flex-col justify-center items-center">
+					<h1 class="text-5xl font-serif font-light leading-tight animate-fade animate-once animate-ease-in-out">
+						{ p.Name }
+					</h1>
+					@divider.Divider()
+				</div>
+				<div class="space-y-2">
+					if guestName != "" {
+						<p class="text-gray-700 dark:text-gray-100 text-base leading-relaxed animate-fade-up animate-once animate-ease-in-out">
+							Hello <span class="font-semibold">{ guestName }</span>,
+						</p>
+					}
+					<p class="text-gray-700 dark:text-gray-100 text-base leading-relaxed animate-fade-up animate-once animate-ease-in-out">
+						We joyfully invite you to celebrate
+					</p>
+					<p class="text-gray-700 dark:text-gray-100 text-base leading-relaxed animate-fade-up animate-once animate-ease-in-out">
+						our wedding day
+					</p>
+				</div>
+			}
+		}
+		<div class="absolute bottom-8 left-1/2 transform -translate-x-1/2">
+			<div class="w-16 h-0.5 bg-primary"></div>
+		</div>
+	}
+}

@@ -1,0 +1,40 @@
+package modal
+
+import (
+	"github.com/ditwrd/wed/internal/web/component/button"
+)
+
+// InvitationModal creates the invitation modal that auto-opens on page load
+templ InvitationModal(imageSrc, imageAlt string) {
+	@Modal(Props{
+		ID:          "invitation-modal",
+		Class:       "w-full h-full flex items-center justify-center p-0 m-0",
+		InitialOpen: true,
+	}) {
+		@Body(BodyProps{
+			Class: "p-0 m-0 w-full h-full flex flex-col items-center justify-center bg-background",
+		}) {
+			<div class="w-full h-full flex flex-col items-center justify-center relative overflow-hidden">
+				<!-- Invitation image that fills the screen -->
+				<img 
+					src={ imageSrc } 
+					alt={ imageAlt }
+					class="w-full h-full object-cover md:object-contain"
+				/>
+				
+				<!-- Overlay with open invitation button -->
+				<div class="absolute inset-0 bg-black bg-opacity-30 flex items-end justify-center pb-8 md:pb-12">
+					@Close(CloseProps{
+						For: "invitation-modal",
+					}) {
+						@button.Button(button.Props{
+							Class: "px-8 py-4 text-lg font-semibold rounded-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg transform transition-all duration-300 hover:scale-105",
+						}) {
+							Open Invitation
+						}
+					}
+				</div>
+			</div>
+		}
+	}
+}
