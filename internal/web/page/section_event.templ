@@ -1,0 +1,99 @@
+package page
+
+import (
+	"github.com/ditwrd/wed/internal/web/component/animate"
+	"github.com/ditwrd/wed/internal/web/component/card"
+	"github.com/ditwrd/wed/internal/web/component/divider"
+	"github.com/ditwrd/wed/internal/web/component/icon"
+	"github.com/ditwrd/wed/internal/web/component/scroll"
+)
+
+type EventSectionProps struct {
+	EventInfo             []EventInfoProps `mapstructure:"rundown"`
+	GoogledMapEmbeddedUrl string           `mapstructure:"google_map_embed_url"`
+}
+
+type EventInfoProps struct {
+	Name     string        `mapstructure:"name"`
+	Date     string        `mapstructure:"date"`
+	Time     string        `mapstructure:"time"`
+	Location LocationProps `mapstructure:"location"`
+}
+
+type LocationProps struct {
+	Name           string `mapstructure:"name"`
+	AddressLineOne string `mapstructure:"address_1"`
+	AddressLineTwo string `mapstructure:"address_2"`
+}
+
+templ EventSection(p EventSectionProps) {
+	@scroll.Section(
+		scroll.SectionProps{
+			ID: "event",
+		},
+	) {
+		<div class="flex flex-col items-center justify-center text-center space-y-12 w-full p-4">
+			<div class="text-center space-y-4">
+				@animate.Animate(animate.AnimateProps{Animation: "animate-fade animate-ease-in-out", Repeat: true}) {
+					<h2 class="text-2xl font-light text-gray-700 dark:text-gray-100">
+						When & Where
+					</h2>
+				}
+				@divider.Divider()
+			</div>
+			@scroll.Subsection() {
+				for _, nEventInfo := range p.EventInfo {
+					@animate.Animate(animate.AnimateProps{Animation: "animate-fade-down animate-ease-in-out w-full flex flex-col items-center justify-center", Repeat: true}) {
+						@card.Card(card.Props{}) {
+							@card.Content(card.ContentProps{}) {
+								<div class="space-y-4 w-full text-center">
+									<h3 class="text-lg font-medium space-y-2">
+										{ nEventInfo.Name }
+									</h3>
+									<div class="space-y-4">
+										<div class="flex items-center justify-center space-x-4">
+											@icon.Calendar(icon.Props{Size: 16, Class: "text-primary"})
+											<span class="text-sm">
+												{ nEventInfo.Date }
+											</span>
+										</div>
+										<div class="flex items-center justify-center space-x-4">
+											@icon.Clock(icon.Props{Size: 16, Class: "text-primary"})
+											<span class="text-sm">
+												{ nEventInfo.Time }
+											</span>
+										</div>
+										<div class="flex items-center justify-center space-x-4">
+											@icon.MapPin(icon.Props{Size: 16, Class: "text-primary"})
+											<div class="text-center">
+												<p class="text-sm">
+													{ nEventInfo.Location.Name }
+												</p>
+												<p class="text-xs">
+													{ nEventInfo.Location.AddressLineOne }
+												</p>
+												<p class="text-xs">
+													{ nEventInfo.Location.AddressLineTwo }
+												</p>
+											</div>
+										</div>
+									</div>
+								</div>
+							}
+						}
+					}
+				}
+			}
+			@animate.Animate(animate.AnimateProps{Animation: "animate-fade animate-ease-in-out w-full", Repeat: true}) {
+				<iframe
+					src={ p.GoogledMapEmbeddedUrl }
+					style="border:0;"
+					allowfullscreen=""
+					loading="lazy"
+					referrerpolicy="no-referrer-when-downgrade"
+					class="aspect-square w-full"
+				></iframe>
+			}
+		</div>
+	}
+}
