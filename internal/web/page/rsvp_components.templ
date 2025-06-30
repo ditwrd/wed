@@ -1,0 +1,94 @@
+package page
+
+import (
+	"github.com/ditwrd/wed/internal/web/component/card"
+	"github.com/ditwrd/wed/internal/web/component/carousel"
+)
+
+// DonationCard displays giftCard information
+templ GiftCard(giftCard GiftCardProps) {
+	@card.Card() {
+		@card.Header() {
+			@card.Title() {
+				Gifts
+			}
+			@card.Description() {
+				Your presence is our gift, but if you wish to contribute:
+			}
+		}
+		@card.Content(card.ContentProps{
+			Class: "flex-col items-start text-left space-y-4",
+		}) {
+			<!-- Gift Options -->
+			<div class="w-full">
+				<h3 class="font-medium text-gray-900 dark:text-gray-100 mb-2">Gift Options</h3>
+				for _, gift := range giftCard.Gifts {
+					@card.Card(card.Props{
+						Class: "mb-3",
+					}) {
+						@card.Content(card.ContentProps{
+							Class: "p-3 rounded-md",
+						}) {
+							<h4 class="font-medium text-gray-800 dark:text-gray-200">{ gift.Name }</h4>
+							<p class="text-sm text-gray-600 dark:text-gray-300">{ gift.Description }</p>
+							for _,account := range gift.Accounts {
+								<p class="text-sm text-gray-600 dark:text-gray-300">
+									{ account.Bank } - { account.Number } - { account.Name }
+								</p>
+							}
+						}
+					}
+				}
+			</div>
+			<!-- Address Options -->
+			<div class="w-full">
+				<h3 class="font-medium text-gray-900 dark:text-gray-100 mb-2">Send To</h3>
+				for _, address := range giftCard.Addresses {
+					@card.Card(card.Props{
+						Class: "mb-2",
+					}) {
+						@card.Content(card.ContentProps{
+							Class: "p-3 rounded-md",
+						}) {
+							<h4 class="font-medium text-gray-800 dark:text-gray-200">{ address.Type }:</h4>
+							<p class="text-sm text-gray-600 dark:text-gray-300">{ address.Address }</p>
+						}
+					}
+				}
+			</div>
+		}
+	}
+}
+
+// MessageCarousel displays messages from guests in a carousel
+templ MessageCarousel(messages []MessageProps) {
+	@carousel.Carousel(carousel.Props{
+		ID:       "message-carousel",
+		Class:    "h-48",
+		Autoplay: true,
+		Interval: 5000,
+		Loop:     true,
+	}) {
+		@carousel.Content() {
+			for _, message := range messages {
+				@carousel.Item(carousel.ItemProps{
+					Class: "flex items-center justify-center p-4",
+				}) {
+					@card.Card(card.Props{
+						Class: "w-full max-w-md h-40 flex flex-col px-8 items-center justify-center",
+					}) {
+						@card.Content(card.ContentProps{
+							Class: "flex flex-col justify-center items-center text-center flex-grow",
+						}) {
+							<p class="text-gray-700 dark:text-gray-300 text-sm line-clamp-3">"{ message.Content }"</p>
+							<p class="mt-2 text-gray-500 dark:text-gray-400 text-xs">{ message.Name } </p>
+							<p class="mt-2 text-gray-500 dark:text-gray-400 text-xs">{ message.Group } </p>
+						}
+					}
+				}
+			}
+		}
+		@carousel.Previous()
+		@carousel.Next()
+	}
+}

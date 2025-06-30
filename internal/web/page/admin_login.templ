@@ -1,0 +1,88 @@
+package page
+
+import (
+	"github.com/ditwrd/wed/internal/web/component/animate"
+	"github.com/ditwrd/wed/internal/web/component/button"
+	"github.com/ditwrd/wed/internal/web/component/card"
+	"github.com/ditwrd/wed/internal/web/component/divider"
+	"github.com/ditwrd/wed/internal/web/component/form"
+	"github.com/ditwrd/wed/internal/web/component/input"
+	"github.com/ditwrd/wed/internal/web/component/nav"
+	"github.com/ditwrd/wed/internal/web/component/scroll"
+	"github.com/ditwrd/wed/internal/web/layout"
+)
+
+type AdminLoginProps struct {
+	Error string
+}
+
+templ AdminLogin(props AdminLoginProps) {
+	@layout.BaseLayout(layout.BaseLayoutProps{}) {
+		<div id="background" class="relative flex min-h-screen w-full items-center justify-center bg-gradient-to-b from-rose-100 dark:from-primary to-background">
+			@scroll.Section(
+				scroll.SectionProps{
+					ID:    "admin-login",
+					Class: "space-y-8",
+				},
+			) {
+				<div class="absolute top-8 left-1/2 transform -translate-x-1/2">
+					<div class="w-16 h-0.5 bg-primary"></div>
+				</div>
+				<div class="text-center space-y-8 max-w-sm">
+					<div class="space-y-4">
+						<h1 class="text-4xl font-serif font-light leading-tight animate-fade animate-once animate-ease-in-out">
+							Admin Access
+						</h1>
+						@divider.Divider()
+					</div>
+					@animate.Animate(
+						animate.AnimateProps{
+							Animation: "animate-fade-up",
+							Repeat:    true,
+						},
+					) {
+						@card.Card(card.Props{
+							Class: "space-y-6 bg-card/80 backdrop-blur-sm p-8 rounded-2xl border border-primary/20 shadow-lg",
+						}) {
+							@card.Content(card.ContentProps{
+								Class: "space-y-6",
+							}) {
+								if props.Error != "" {
+									<div class="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative" role="alert">
+										<span class="block sm:inline">{ props.Error }</span>
+									</div>
+								}
+								<form method="post" action="/admin/auth/login" hx-swap="innerHTML" class="flex flex-col w-full mt-8">
+									@form.Item() {
+										@form.Label(form.LabelProps{
+											For: "password",
+										}) {
+											Password
+										}
+										@input.Input(input.Props{
+											ID:       "password",
+											Name:     "password",
+											Type:     input.TypePassword,
+											Required: true,
+											Class:    "w-full",
+										})
+									}
+									@button.Button(button.Props{
+										Type:  button.TypeSubmit,
+										Class: "w-full",
+									}) {
+										Login
+									}
+								</form>
+							}
+						}
+					}
+				</div>
+				<div class="absolute bottom-8 left-1/2 transform -translate-x-1/2">
+					<div class="w-16 h-0.5 bg-primary"></div>
+				</div>
+			}
+			@nav.AdminNavBar()
+		</div>
+	}
+}

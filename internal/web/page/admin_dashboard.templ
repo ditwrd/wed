@@ -1,0 +1,306 @@
+package page
+
+import (
+	"fmt"
+
+	"github.com/ditwrd/wed/internal/model"
+	"github.com/ditwrd/wed/internal/web/component/animate"
+	"github.com/ditwrd/wed/internal/web/component/button"
+	"github.com/ditwrd/wed/internal/web/component/card"
+	"github.com/ditwrd/wed/internal/web/component/divider"
+	"github.com/ditwrd/wed/internal/web/component/nav"
+	"github.com/ditwrd/wed/internal/web/component/scroll"
+	"github.com/ditwrd/wed/internal/web/component/table"
+	"github.com/ditwrd/wed/internal/web/layout"
+	"github.com/ditwrd/wed/internal/web/utils"
+)
+
+type AdminDashboardProps struct {
+	Stats  map[string]interface{}
+	RSVPs  []model.RSVP
+	Count  int
+	Limit  int
+	Offset int
+}
+
+templ AdminDashboard(props AdminDashboardProps) {
+	@layout.BaseLayout(layout.BaseLayoutProps{}) {
+		<div id="background" class="relative flex min-h-screen w-full items-center justify-center bg-gradient-to-b from-rose-100 dark:from-primary to-background">
+			@scroll.Scroll() {
+				@DashboardHeader()
+				@DashboardRSVPSection(props)
+			}
+			@nav.AdminNavBar()
+		</div>
+	}
+}
+
+templ DashboardHeader() {
+	@scroll.Section(
+		scroll.SectionProps{
+			ID: "admin-dashboard-header",
+		},
+	) {
+		<div class="absolute top-8 left-1/2 transform -translate-x-1/2">
+			<div class="w-16 h-0.5 bg-primary"></div>
+		</div>
+		<div class="text-center space-y-8 max-w-sm">
+			<div class="space-y-4">
+				<h1 class="text-4xl font-serif font-light leading-tight animate-fade animate-once animate-ease-in-out">
+					Admin Dashboard
+				</h1>
+				@divider.Divider()
+				<p class="text-gray-700 dark:text-gray-100 text-base leading-relaxed animate-fade-up animate-once animate-ease-in-out">
+					Manage your wedding RSVPs and guest information
+				</p>
+			</div>
+		</div>
+		<div class="absolute bottom-8 left-1/2 transform -translate-x-1/2">
+			<div class="w-16 h-0.5 bg-primary"></div>
+		</div>
+	}
+}
+
+templ StatCard(title, value, valueClass string) {
+	@card.Card(card.Props{
+		Class: "flex flex-col items-center justify-center text-center w-full aspect-square bg-card/80 backdrop-blur-sm overflow-hidden rounded-2xl border border-primary/20 shadow-lg",
+	}) {
+		@card.Content(card.ContentProps{
+			Class: "px-4 py-5 sm:p-6",
+		}) {
+			<div class="text-sm font-medium text-gray-500 dark:text-gray-300">{ title }</div>
+			<div class={ utils.TwMerge("mt-1 text-3xl font-semibold", valueClass) }>
+				{ value }
+			</div>
+		}
+	}
+}
+
+templ DashboardRSVPSection(props AdminDashboardProps) {
+	@scroll.Section(
+		scroll.SectionProps{
+			ID: "admin-dashboard-rsvps",
+		},
+	) {
+		<div class="w-full max-w-4xl">
+			<div class="text-center space-y-4 mb-12">
+				<h2 class="text-2xl font-light text-gray-700 dark:text-gray-100">
+					RSVP Statistics
+				</h2>
+				@divider.Divider()
+			</div>
+			@animate.Animate(
+				animate.AnimateProps{
+					Animation: "animate-fade-up",
+					Repeat:    true,
+				},
+			) {
+				<div class="grid grid-cols-1 items-center justify-center md:grid-cols-2 lg:grid-cols-4 gap-6">
+					@StatCard("Total RSVPs", fmt.Sprintf("%v", props.Stats["total"]), "text-gray-900")
+					@StatCard("Attending", fmt.Sprintf("%v", props.Stats["attending"]), "text-green-600")
+					@StatCard("Not Attending", fmt.Sprintf("%v", props.Stats["not_attending"]), "text-red-600")
+					@StatCard("Groups", fmt.Sprintf("%v", props.Stats["groups"]), "text-blue-600")
+				</div>
+			}
+		</div>
+		<div class="w-full max-w-4xl">
+			<div class="text-center space-y-4 mb-12">
+				<h2 class="text-2xl font-light text-gray-700 dark:text-gray-100">
+					RSVP List
+				</h2>
+				@divider.Divider()
+			</div>
+			@animate.Animate(
+				animate.AnimateProps{
+					Animation: "animate-fade-up",
+					Repeat:    true,
+				},
+			) {
+				<div class={ utils.TwMerge("bg-card/80 backdrop-blur-sm overflow-hidden rounded-2xl border border-primary/20 shadow-lg") }>
+					@AdminTable(props.RSVPs)
+				</div>
+				@Pagination(props)
+			}
+		</div>
+	}
+}
+
+templ AdminTable(rsvps []model.RSVP) {
+	@table.Table(table.Props{ID: "admin-table"}) {
+		@table.Header() {
+			@table.Row() {
+				@table.Head() {
+					Name 
+				}
+				@table.Head() {
+					Attending 
+				}
+				@table.Head() {
+					Message 
+				}
+				@table.Head() {
+					Group 
+				}
+				@table.Head() {
+					Date 
+				}
+			}
+		}
+		@table.Body(
+			table.BodyProps{ID: "table-body"},
+		) {
+			for _, rsvp := range rsvps {
+				@table.Row() {
+					@table.Cell() {
+						{ rsvp.Name }
+					}
+					@table.Cell() {
+						if rsvp.Attending {
+							<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+								Yes
+							</span>
+						} else {
+							<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+								No
+							</span>
+						}
+					}
+					@table.Cell() {
+						{ rsvp.Message }
+					}
+					@table.Cell() {
+						{ rsvp.GroupName }
+					}
+					@table.Cell() {
+						{ rsvp.CreatedAt.Format("2006-01-02 15:04:05") }
+					}
+				}
+			}
+		}
+	}
+}
+
+templ Pagination(props AdminDashboardProps) {
+	{{ currentPage := props.Offset/props.Limit + 1 }}
+	{{ totalPages := (props.Count + props.Limit - 1) / props.Limit }}
+	{{ hasNext := currentPage < totalPages }}
+	{{ hasPrev := currentPage > 1 }}
+	<div id="pagination" hx-swap-oob="outerHTML" class="flex items-center justify-between border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3 sm:px-6 rounded-b-2xl">
+		<div class="flex flex-1 justify-between sm:hidden">
+			if hasPrev {
+				@button.Button(button.Props{
+					Variant: button.VariantOutline,
+					Class:   "relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700",
+					Attributes: templ.Attributes{
+						"hx-get":    "/api/v1/rsvps?offset=" + fmt.Sprintf("%d", (currentPage-2)*props.Limit) + "&limit=" + fmt.Sprintf("%d", props.Limit),
+						"hx-target": "#admin-table",
+						"hx-swap":   "outerHTML",
+					},
+				}) {
+					Previous
+				}
+			} else {
+				<span class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-500">
+					Previous
+				</span>
+			}
+			if hasNext {
+				@button.Button(button.Props{
+					Variant: button.VariantOutline,
+					Class:   "relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700",
+					Attributes: templ.Attributes{
+						"hx-get":    "/api/v1/rsvps?offset=" + fmt.Sprintf("%d", (currentPage)*props.Limit) + "&limit=" + fmt.Sprintf("%d", props.Limit),
+						"hx-target": "#admin-table",
+						"hx-swap":   "outerHTML",
+					},
+				}) {
+					Next
+				}
+			} else {
+				<span class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-500">
+					Next
+				</span>
+			}
+		</div>
+		<div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+			<div>
+				<p class="text-sm text-gray-700 dark:text-gray-300">
+					Showing
+					<span class="font-medium">{ props.Offset + 1 }</span>
+					to
+					if props.Offset + 1 > len(props.RSVPs) {
+						<span class="font-medium">{ fmt.Sprintf("%d", props.Offset + len(props.RSVPs)) }</span>
+					} else {
+						<span class="font-medium">{ fmt.Sprintf("%d", props.Count) }</span>
+					}
+					of
+					<span class="font-medium">{ props.Count }</span>
+					results
+				</p>
+			</div>
+			<div>
+				<nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+					if hasPrev {
+						@button.Button(button.Props{
+							Variant: button.VariantOutline,
+							Class:   "relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700",
+							Attributes: templ.Attributes{
+								"hx-get":    "/api/v1/rsvps?offset=" + fmt.Sprintf("%d", (currentPage-2)*props.Limit) + "&limit=" + fmt.Sprintf("%d", props.Limit),
+								"hx-target": "#admin-table",
+								"hx-swap":   "outerHTML",
+							},
+						}) {
+							<span class="sr-only">Previous</span>
+							<svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+								<path fill-rule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clip-rule="evenodd"></path>
+							</svg>
+						}
+					}
+					for i := 1; i <= totalPages; i++ {
+						if i == currentPage {
+							<span class="relative z-10 inline-flex items-center bg-primary px-4 py-2 text-sm font-semibold text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:bg-primary dark:text-white">
+								{ i }
+							</span>
+						} else if i <= 3 || i >= totalPages - 2 || (i >= currentPage - 1 && i <= currentPage + 1) {
+							@button.Button(button.Props{
+								Variant: button.VariantOutline,
+								Class:   "relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700",
+								Attributes: templ.Attributes{
+									"hx-get":    "/api/v1/rsvps?offset=" + fmt.Sprintf("%d", (i-1)*props.Limit) + "&limit=" + fmt.Sprintf("%d", props.Limit),
+									"hx-target": "#admin-table",
+									"hx-swap":   "outerHTML",
+								},
+							}) {
+								{ i }
+							}
+						} else if i == 4 && currentPage > 4 {
+							<span class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-700 ring-1 ring-inset ring-gray-300 focus:outline-offset-0 dark:text-gray-300">
+								...
+							</span>
+						} else if i == totalPages - 3 && currentPage < totalPages - 3 {
+							<span class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-700 ring-1 ring-inset ring-gray-300 focus:outline-offset-0 dark:text-gray-300">
+								...
+							</span>
+						}
+					}
+					if hasNext {
+						@button.Button(button.Props{
+							Variant: button.VariantOutline,
+							Class:   "relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700",
+							Attributes: templ.Attributes{
+								"hx-get":    "/api/v1/rsvps?offset=" + fmt.Sprintf("%d", (currentPage)*props.Limit) + "&limit=" + fmt.Sprintf("%d", props.Limit),
+								"hx-target": "#admin-table",
+								"hx-swap":   "outerHTML",
+							},
+						}) {
+							<span class="sr-only">Next</span>
+							<svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+								<path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd"></path>
+							</svg>
+						}
+					}
+				</nav>
+			</div>
+		</div>
+	</div>
+}

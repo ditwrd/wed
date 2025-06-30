@@ -1,0 +1,46 @@
+package nav
+
+import (
+	"github.com/ditwrd/wed/internal/web/component/button"
+	"github.com/ditwrd/wed/internal/web/utils"
+)
+
+type BarProps struct {
+	Class string
+}
+
+templ Bar(props ...BarProps) {
+	{{ var p BarProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div class="flex fixed bottom-4 h-16 w-full sm:max-w-sm items-center justify-center">
+		<nav
+			class={ utils.TwMerge(
+		"flex w-full sm:max-w-sm h-16 items-center justify-evenly rounded-4xl backdrop-blur-md border border-s mx-4", 
+		p.Class,
+		) }
+		>
+			{ children... }
+		</nav>
+	</div>
+}
+
+type ButtonProps struct {
+	Class string
+}
+
+templ Button(href string, props ...ButtonProps) {
+	{{ var p ButtonProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	@button.Button(button.Props{
+		Size:    button.SizeLg,
+		Variant: button.VariantGhost,
+		Href:    href,
+		Class:   p.Class,
+	}) {
+		{ children... }
+	}
+}

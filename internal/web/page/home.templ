@@ -1,0 +1,48 @@
+package page
+
+import (
+	"github.com/ditwrd/wed/internal/web/component/nav"
+	"github.com/ditwrd/wed/internal/web/component/scroll"
+	"github.com/ditwrd/wed/internal/web/layout"
+)
+
+type ImageProps struct {
+	Src string `mapstructure:"src"`
+	Alt string `mapstructure:"alt"`
+}
+
+type InvitationModalProps struct {
+	Image ImageProps `mapstructure:"image"`
+	Text  string     `mapstructure:"text"`
+}
+
+type HomePageProps struct {
+	InvitationModalProps   InvitationModalProps   `mapstructure:"modal"`
+	WelcomeSectionProps    WelcomeSectionProps    `mapstructure:"welcome"`
+	CoupleInfoSectionProps CoupleInfoSectionProps `mapstructure:"couple"`
+	EventSectionProps      EventSectionProps      `mapstructure:"event"`
+	RSVPSectionProps       RSVPSectionProps       `mapstructure:"rsvp"`
+	BaseLayoutProps        layout.BaseLayoutProps `mapstructure:"meta"`
+}
+
+type HomeProps struct {
+	PageProps HomePageProps
+	Group     string
+	GuestName string
+	Messages  []MessageProps
+}
+
+templ Home(p HomeProps) {
+	@layout.BaseLayout(p.PageProps.BaseLayoutProps) {
+		<div id="background" class="relative flex min-h-screen w-full items-center justify-center">
+			@InvitationModal(p.PageProps.InvitationModalProps, p.GuestName)
+			@scroll.Scroll() {
+				@WelcomeSection(p.PageProps.WelcomeSectionProps, p.GuestName)
+				@CoupleInfoSection(p.PageProps.CoupleInfoSectionProps)
+				@EventSection(p.PageProps.EventSectionProps)
+				@RSVPSection(p.GuestName, p.Group, p.Messages, p.PageProps.RSVPSectionProps)
+				@nav.NavBar()
+			}
+		</div>
+	}
+}

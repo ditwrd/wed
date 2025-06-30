@@ -1,0 +1,92 @@
+package layout
+
+import (
+	"github.com/ditwrd/wed/internal/web/component/carousel"
+	"github.com/ditwrd/wed/internal/web/component/input"
+	"github.com/ditwrd/wed/internal/web/component/label"
+	"github.com/ditwrd/wed/internal/web/component/popover"
+	"github.com/ditwrd/wed/internal/web/component/selectbox"
+	"github.com/ditwrd/wed/internal/web/component/textarea"
+	"github.com/ditwrd/wed/internal/web/component/toast"
+)
+
+templ ThemeSwitcherScript() {
+	{{ handle := templ.NewOnceHandle() }}
+	@handle.Once() {
+		<script nonce={ templ.GetNonce(ctx) }>
+      function getPreferredColorScheme() {
+        if (window.matchMedia) {
+          return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        return 'light';
+      }
+      
+      if (!localStorage.getItem('appTheme')) {
+        localStorage.setItem('appTheme', getPreferredColorScheme());
+      }
+      
+			document.documentElement.classList.toggle('dark', localStorage.getItem('appTheme') === 'dark');
+
+			document.addEventListener('alpine:init', () => {
+				Alpine.data('themeHandler', () => ({
+					isDark: localStorage.getItem('appTheme') === 'dark',
+					themeClasses() {
+						return this.isDark ? 'text-white' : 'bg-white text-black'
+					},
+					toggleTheme() {
+						this.isDark = !this.isDark;
+						localStorage.setItem('appTheme', this.isDark ? 'dark' : 'light');
+						document.documentElement.classList.toggle('dark', this.isDark);
+					}
+				}))
+			})
+		</script>
+	}
+}
+
+type BaseLayoutProps struct {
+	Title       string `mapstructure:"title"`
+	Url         string `mapstructure:"url"`
+	ImageUrl    string `mapstructure:"image_url"`
+	Description string `mapstructure:"description"`
+}
+
+templ BaseLayout(p BaseLayoutProps) {
+	<!DOCTYPE html>
+	<html lang="en" class="h-full dark">
+		<head>
+			<title>{ p.Title } Wedding</title>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<meta property="og:url" content={ p.Url }/>
+			<meta property="og:type" content="website"/>
+			<meta property="og:title" content={ p.Title }/>
+			<meta property="og:description" content={ p.Description }/>
+			<meta property="og:image" content={ p.ImageUrl }/>
+			<script defer src="/static/alpine-intersect.min.js"></script>
+			<script defer src="/static/alpine-focus.min.js"></script>
+			<script defer src="/static/alpine.min.js"></script>
+			<script defer src="/static/templui-htmx.min.js"></script>
+			<script src="/static/htmx.min.js"></script>
+			@ThemeSwitcherScript()
+			@label.Script()
+			@input.Script()
+			@carousel.Script()
+			@toast.Script()
+			@popover.Script()
+			@selectbox.Script()
+			@textarea.Script()
+			<link href="/static/styles.css" rel="stylesheet"/>
+			<link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png"/>
+			<link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png"/>
+			<link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png"/>
+			<link rel="manifest" href="/static/site.webmanifest"/>
+		</head>
+		<body
+			x-data="themeHandler"
+			x-bind:class="themeClasses"
+		>
+			{ children... }
+		</body>
+	</html>
+}

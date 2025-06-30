@@ -1,0 +1,65 @@
+
+package page
+
+import (
+	"github.com/ditwrd/wed/internal/web/component/aspectratio"
+	"github.com/ditwrd/wed/internal/web/component/button"
+	"github.com/ditwrd/wed/internal/web/component/card"
+)
+
+templ InvitationModal(p InvitationModalProps, guest string) {
+	<div x-data="{ modalOpen: true }" @keydown.escape.window="modalOpen = false" :class="{ 'z-40': modalOpen }" class="relative w-auto h-auto">
+		<template x-teleport="body">
+			<div x-show="modalOpen" class="fixed inset-0 z-[99] flex items-center justify-center w-screen h-screen" x-cloak>
+				<div
+					x-show="modalOpen"
+					x-transition:leave="ease-in-out duration-400"
+					x-transition:leave-start="opacity-100"
+					x-transition:leave-end="opacity-0"
+					@click="modalOpen=false"
+					class="absolute inset-0 w-full h-full bg-background bg-opacity-40"
+				></div>
+				<div
+					x-trap.inert.noscroll="modalOpen"
+					x-show="modalOpen"
+					x-transition:leave="ease-in-out duration-400"
+					x-transition:leave-start="opacity-100"
+					x-transition:leave-end="opacity-0"
+					class="relative w-full bg-background shadow-lg sm:max-w-3xl sm:rounded-lg"
+				>
+					<div class="flex flex-col sm:flex-row-reverse sm:items-stretch sm:justify-center gap-4">
+						@aspectratio.AspectRatio(aspectratio.Props{
+							Ratio: aspectratio.RatioSquare,
+							Class: "rounded-md",
+						}) {
+							<img src={ p.Image.Src } alt={ p.Image.Alt } class="w-full h-full object-cover sm:rounded-r-lg"/>
+						}
+						<div class="sm:w-1/2 w-full flex flex-col justify-center items-stretch gap-4">
+							@card.Card(card.Props{Class: "h-full"}) {
+								@card.Content(card.ContentProps{Class: "flex flex-col justify-center h-full w-full text-center space-y-4 p-6"}) {
+									<div>
+										<p class="text-gray-700 dark:text-gray-100 text-lg font-medium leading-relaxed">
+											if guest == "" {
+												Hello there!
+											} else {
+												Hi { guest }!
+											}
+										</p>
+										<p class="text-gray-700 dark:text-gray-100 text-sm leading-relaxed">{ p.Text }</p>
+									</div>
+									@button.Button(button.Props{
+										Variant:    button.VariantDefault,
+										Size:       button.SizeLg,
+										Attributes: templ.Attributes{"@click": "modalOpen=false"},
+									}) {
+										Open
+									}
+								}
+							}
+						</div>
+					</div>
+				</div>
+			</div>
+		</template>
+	</div>
+}

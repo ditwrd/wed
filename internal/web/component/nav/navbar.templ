@@ -1,0 +1,29 @@
+package nav
+
+import (
+	"github.com/ditwrd/wed/internal/web/component/icon"
+	"github.com/ditwrd/wed/internal/web/modules"
+)
+
+// NavBar creates the navigation bar used in the home page
+templ NavBar() {
+	@Bar() {
+		{{
+		buttons := []struct {
+			Href string
+			Icon templ.Component
+		}{
+			{"#welcome", icon.House()},
+			{"#info", icon.User()},
+			{"#event", icon.MapPin()},
+			{"#rsvp", icon.Mail()},
+		}
+		}}
+		for _, navButton := range buttons {
+			@Button(navButton.Href) {
+				@navButton.Icon
+			}
+		}
+		@modules.ThemeSwitcher()
+	}
+}
