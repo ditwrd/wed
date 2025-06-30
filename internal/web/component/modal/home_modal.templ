@@ -1,0 +1,41 @@
+package modal
+
+import (
+	"github.com/ditwrd/wed/internal/web/component/button"
+)
+
+// DefaultModal creates the specific modal used in the home page
+templ DefaultModal() {
+	@Modal(Props{
+		ID:          "default-modal",
+		Class:       "w-full h-full",
+		InitialOpen: false,
+	}) {
+		@Header() {
+			Are you absolutely sure?
+		}
+		@Body() {
+			This action cannot be undone. This will permanently delete your account and remove your data from our servers.				
+		}
+		@Footer() {
+			<div class="flex gap-2">
+				@Close(CloseProps{
+					For: "default-modal",
+				}) {
+					@button.Button() {
+						Cancel
+					}
+				}
+				@Close(CloseProps{
+					For: "default-modal",
+				}) {
+					@button.Button(button.Props{
+						Variant: button.VariantSecondary,
+					}) {
+						Continue
+					}
+				}
+			</div>
+		}
+	}
+}

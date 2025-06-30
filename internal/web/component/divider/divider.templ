@@ -1,0 +1,14 @@
+package divider
+
+import "github.com/ditwrd/wed/internal/web/component/icon"
+
+// Divider creates a decorative divider with a heart icon
+templ Divider() {
+	<div class="flex items-center justify-center space-x-4">
+		<div class="w-8 h-0.5 bg-primary"></div>
+		<div class="text-primary">
+			@icon.Heart(icon.Props{Size: 16})
+		</div>
+		<div class="w-8 h-0.5 bg-primary"></div>
+	</div>
+}

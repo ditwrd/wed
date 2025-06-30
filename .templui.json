@@ -1,0 +1,7 @@
+{
+  "componentsDir": "internal/web/component",
+  "utilsDir": "internal/web/utils",
+  "moduleName": "github.com/ditwrd/wed",
+  "jsDir": "internal/web/static",
+  "jsPublicPath": "/static"
+}

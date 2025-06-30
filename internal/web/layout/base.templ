@@ -1,0 +1,78 @@
+package layout
+
+import (
+	"github.com/ditwrd/wed/internal/web/component/carousel"
+	"github.com/ditwrd/wed/internal/web/component/input"
+	"github.com/ditwrd/wed/internal/web/component/label"
+	"github.com/ditwrd/wed/internal/web/component/modal"
+	"github.com/ditwrd/wed/internal/web/component/popover"
+	"github.com/ditwrd/wed/internal/web/component/selectbox"
+	"github.com/ditwrd/wed/internal/web/component/textarea"
+	"github.com/ditwrd/wed/internal/web/component/toast"
+)
+
+templ ThemeSwitcherScript() {
+	{{ handle := templ.NewOnceHandle() }}
+	@handle.Once() {
+		<script nonce={ templ.GetNonce(ctx) }>
+      function getPreferredColorScheme() {
+        if (window.matchMedia) {
+          return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        return 'light';
+      }
+      
+      if (!localStorage.getItem('appTheme')) {
+        localStorage.setItem('appTheme', getPreferredColorScheme());
+      }
+      
+			document.documentElement.classList.toggle('dark', localStorage.getItem('appTheme') === 'dark');
+
+			document.addEventListener('alpine:init', () => {
+				Alpine.data('themeHandler', () => ({
+					isDark: localStorage.getItem('appTheme') === 'dark',
+					themeClasses() {
+						return this.isDark ? 'text-white' : 'bg-white text-black'
+					},
+					toggleTheme() {
+						this.isDark = !this.isDark;
+						localStorage.setItem('appTheme', this.isDark ? 'dark' : 'light');
+						document.documentElement.classList.toggle('dark', this.isDark);
+					}
+				}))
+			})
+		</script>
+	}
+}
+
+templ BaseLayout() {
+	<!DOCTYPE html>
+	<html lang="en" class="h-full dark">
+		<head>
+			<title>Wedinv</title>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<script defer src="/static/alpine-intersect.min.js"></script>
+			<script defer src="/static/alpine.min.js"></script>
+			<script defer src="/static/templui-htmx.min.js"></script>
+			<script src="/static/htmx.min.js"></script>
+			<script defer src="/static/alpine.min.js"></script>
+			@ThemeSwitcherScript()
+			@label.Script()
+			@input.Script()
+			@carousel.Script()
+			@toast.Script()
+			@modal.Script()
+			@popover.Script()
+			@selectbox.Script()
+			@textarea.Script()
+			<link href="/static/styles.css" rel="stylesheet"/>
+		</head>
+		<body
+			x-data="themeHandler"
+			x-bind:class="themeClasses"
+		>
+			{ children... }
+		</body>
+	</html>
+}
