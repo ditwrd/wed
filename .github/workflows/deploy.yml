@@ -1,0 +1,53 @@
+name: Build App
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - uses: benjlevesque/short-sha@v3.0
+        id: short-sha
+
+      - name: Get current date
+        id: date
+        run: echo "date=$(date +'%Y%m%d')" > $GITHUB_OUTPUT
+
+      - name: Install dependencies
+        uses: jdx/mise-action@v2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install JS dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install templ
+        run: go get -tool github.com/a-h/templ/cmd/templ@latest
+
+      - name: Generate templ files
+        run: go tool templ generate
+
+      - name: Build TailwindCSS
+        run: pnpm tailwindcss -m -i internal/web/tailwind.css -o internal/web/static/styles.css
+
+      - name: Build Go binary
+        run: go build -v -o main main.go
+
+      - name: Kaniko build
+        uses: aevea/action-kaniko@master
+        with:
+          registry: ghcr.io
+          image: wed-core
+          password: ${{ secrets.GITHUB_TOKEN }}
+          cache: true
+          cache_registry: cache
+          tag: ${{ steps.date.outputs.date }}-${{ steps.short-sha.outputs.sha }}
+          tag_with_latest: true

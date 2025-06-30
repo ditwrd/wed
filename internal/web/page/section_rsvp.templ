@@ -1,0 +1,198 @@
+package page
+
+import (
+	"github.com/ditwrd/wed/internal/web/component/animate"
+	"github.com/ditwrd/wed/internal/web/component/button"
+	"github.com/ditwrd/wed/internal/web/component/card"
+	"github.com/ditwrd/wed/internal/web/component/divider"
+	"github.com/ditwrd/wed/internal/web/component/form"
+	"github.com/ditwrd/wed/internal/web/component/input"
+	"github.com/ditwrd/wed/internal/web/component/radio"
+	"github.com/ditwrd/wed/internal/web/component/scroll"
+	"github.com/ditwrd/wed/internal/web/component/textarea"
+)
+
+type RSVPSectionProps struct {
+	GiftCard GiftCardProps `mapstructure:"gift_card"`
+}
+
+type GiftCardProps struct {
+	Gifts     []GiftProps    `mapstructure:"gifts"`
+	Addresses []AddressProps `mapstructure:"addresses"`
+}
+
+type GiftProps struct {
+	Name        string         `mapstructure:"name"`
+	Description string         `mapstructure:"description"`
+	Accounts    []AccountProps `mapstructure:"accounts"`
+}
+
+type AccountProps struct {
+	Bank   string `mapstructure:"bank"`
+	Number string `mapstructure:"number"`
+	Name   string `mapstructure:"name"`
+}
+
+type AddressProps struct {
+	Type    string `mapstructure:"type"`
+	Address string `mapstructure:"address"`
+}
+
+type MessageProps struct {
+	Name    string
+	Group   string
+	Content string
+}
+
+// PersonalRSVPForm represents the personal RSVP form data
+type PersonalRSVPForm struct {
+	Name      string `form:"name" validate:"required"`
+	Attending string `form:"attending" validate:"required,oneof=yes no"`
+	Message   string `form:"message"`
+}
+
+// GroupRSVPForm represents the group RSVP form data
+type GroupRSVPForm struct {
+	Name      string `form:"name" validate:"required"`
+	Attending string `form:"attending" validate:"required,oneof=yes no"`
+	Message   string `form:"message"`
+	GroupName string `form:"group_name" validate:"required"`
+}
+
+// OpenRSVPForm represents the open RSVP form data
+type OpenRSVPForm struct {
+	Name      string `form:"name" validate:"required"`
+	Attending string `form:"attending" validate:"required,oneof=yes no"`
+	Message   string `form:"message"`
+}
+
+//templ RSVPSection(name string, group string, donation DonationProps, messages []MessageProps) {
+templ RSVPSection(guestName string, group string, messages []MessageProps, props RSVPSectionProps) {
+	@scroll.Section(
+		scroll.SectionProps{
+			ID: "rsvp",
+		},
+	) {
+		<div class="flex flex-col items-center justify-center text-center space-y-12 w-full p-4">
+			<div class="text-center space-y-4">
+				@animate.Animate(animate.AnimateProps{Animation: "animate-fade animate-ease-in-out", Repeat: true}) {
+					<h2 class="text-2xl font-light text-gray-700 dark:text-gray-100">
+						RSVP
+					</h2>
+				}
+				@divider.Divider()
+			</div>
+		</div>
+		<!-- Donation Card -->
+		@scroll.Subsection() {
+			@animate.Animate(animate.AnimateProps{Animation: "animate-fade-down animate-ease-in-out", Repeat: true}) {
+				@GiftCard(props.GiftCard)
+			}
+		}
+		@scroll.Subsection(scroll.SubsectionProps{Class: "w-full"}) {
+			@animate.Animate(animate.AnimateProps{Animation: "animate-fade-up animate-ease-in-out", Repeat: true}) {
+				<form hx-post="/rsvp" hx-target="#rsvp-toast-container" hx-swap="innerHTML" class="flex flex-col w-full mt-8">
+					<div id="rsvp-toast-container" class="mb-4"></div>
+					@card.Card() {
+						@card.Header() {
+							@card.Title(card.TitleProps{Class: "text-center"}) {
+								RSVP Form
+							}
+						}
+						@card.Content(card.ContentProps{
+							Class: "flex-col items-start text-left space-y-2",
+						}) {
+							@form.Item() {
+								@form.Label(form.LabelProps{
+									For: "name-form",
+								}) {
+									Name *
+								}
+								@input.Input(input.Props{
+									ID:          "name-form",
+									Name:        "name",
+									Type:        input.TypeText,
+									Placeholder: "Enter your name",
+									Required:    true,
+									Value:       guestName,
+								})
+							}
+							@form.Item() {
+								@form.Label(form.LabelProps{
+									For: "attending-form",
+								}) {
+									Will you be attending? *
+								}
+								<div class="flex space-x-4">
+									@form.ItemFlex() {
+										@radio.Radio(radio.Props{
+											ID:       "attending-yes",
+											Name:     "attending",
+											Value:    "yes",
+											Required: true,
+										})
+										@form.Label(form.LabelProps{
+											For: "attending-yes",
+										}) {
+											Yes
+										}
+									}
+									@form.ItemFlex() {
+										@radio.Radio(radio.Props{
+											ID:       "attending-no",
+											Name:     "attending",
+											Value:    "no",
+											Required: true,
+										})
+										@form.Label(form.LabelProps{
+											For: "attending-no",
+										}) {
+											No
+										}
+									}
+								</div>
+							}
+							@form.Item() {
+								@form.Label(form.LabelProps{
+									For: "message-form",
+								}) {
+									Message for the couple
+								}
+								@textarea.Textarea(textarea.Props{
+									ID:          "message-form",
+									Name:        "message",
+									Placeholder: "Share your wishes or memories...",
+								})
+							}
+							@form.Item() {
+								@input.Input(input.Props{
+									ID:          "group-name-form",
+									Name:        "group_name",
+									Type:        input.TypeText,
+									Placeholder: "Enter group name (optional)",
+									Class:       "hidden",
+									Value:       group,
+								})
+							}
+						}
+						@card.Footer() {
+							@button.Button(button.Props{Type: button.TypeSubmit}) {
+								Submit!
+							}
+						}
+					}
+				</form>
+			}
+		}
+		@scroll.Subsection() {
+			@animate.Animate(animate.AnimateProps{Animation: "animate-fade animate-ease-in-out", Repeat: true}) {
+				if len(messages) > 0 {
+					<div class="w-full sm:max-w-160 mt-8">
+						<h3 class="text-xl font-light text-center text-gray-700 dark:text-gray-100 mb-4">Messages from Guests</h3>
+						@MessageCarousel(messages)
+					</div>
+				}
+			}
+		}
+	}
+}

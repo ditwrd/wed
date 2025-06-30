@@ -1,0 +1,72 @@
+package page
+
+import (
+	"github.com/ditwrd/wed/internal/web/component/animate"
+	"github.com/ditwrd/wed/internal/web/component/card"
+	"github.com/ditwrd/wed/internal/web/component/divider"
+	"github.com/ditwrd/wed/internal/web/component/scroll"
+)
+
+type WelcomeSectionProps struct {
+	Date string `mapstructure:"date"`
+	Name string `mapstructure:"name"`
+}
+
+templ WelcomeSection(p WelcomeSectionProps, guestName string) {
+	@scroll.Section(
+		scroll.SectionProps{
+			ID:    "welcome",
+			Class: "bg-gradient-to-b from-rose-100 dark:from-primary to-background",
+		},
+	) {
+		<div class="absolute top-8 left-1/2 transform -translate-x-1/2">
+			<div class="w-16 h-0.5 bg-primary"></div>
+		</div>
+		@card.Card(card.Props{
+			Class: "flex flex-col justify-center text-center items-center",
+		}) {
+			@card.Content(card.ContentProps{
+				Class: "text-center space-y-8 max-w-sm",
+			}) {
+				@animate.Animate(animate.AnimateProps{Animation: "animate-fade-down animate-ease-in-out", Repeat: true}) {
+					<div class="space-y-2">
+						<p class="text-sm text-primary uppercase font-medium tracking-wider">
+							Save the Date
+						</p>
+						<p class="text-lg">
+							{ p.Date }
+						</p>
+					</div>
+				}
+				<div class="space-y-4 flex flex-col justify-center items-center">
+					@animate.Animate(animate.AnimateProps{Animation: "animate-fade animate-ease-in-out", Repeat: true}) {
+						<h1 class="text-5xl font-serif font-light leading-tight">
+							{ p.Name }
+						</h1>
+					}
+					@divider.Divider()
+				</div>
+				@animate.Animate(animate.AnimateProps{Animation: "animate-fade-up animate-ease-in-out", Repeat: true}) {
+					<div class="space-y-2">
+						if guestName != "" {
+							<p class="text-gray-700 dark:text-gray-100 text-base leading-relaxed">
+								Hi <span class="font-semibold">{ guestName }</span>,
+							</p>
+						}
+						<div>
+							<p class="text-gray-700 dark:text-gray-100 text-base leading-relaxed">
+								We joyfully invite you to celebrate
+							</p>
+							<p class="text-gray-700 dark:text-gray-100 text-base leading-relaxed">
+								our wedding day
+							</p>
+						</div>
+					</div>
+				}
+			}
+		}
+		<div class="absolute bottom-8 left-1/2 transform -translate-x-1/2">
+			<div class="w-16 h-0.5 bg-primary"></div>
+		</div>
+	}
+}

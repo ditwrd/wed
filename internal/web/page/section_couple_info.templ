@@ -1,0 +1,224 @@
+package page
+
+import (
+	"github.com/ditwrd/wed/internal/web/component/animate"
+	"github.com/ditwrd/wed/internal/web/component/aspectratio"
+	"github.com/ditwrd/wed/internal/web/component/card"
+	"github.com/ditwrd/wed/internal/web/component/carousel"
+	"github.com/ditwrd/wed/internal/web/component/divider"
+	"github.com/ditwrd/wed/internal/web/component/scroll"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
+)
+
+type CoupleInfoSectionProps struct {
+	CoupleA       CoupleInfoProps `mapstructure:"couple_a"`
+	CoupleB       CoupleInfoProps `mapstructure:"couple_b"`
+	StoryCarousel CarouselProps   `mapstructure:"story_carousel"`
+	Story         string          `mapstructure:"story"`
+	Gallery       GalleryProps    `mapstructure:"gallery"`
+}
+
+templ CoupleInfoSection(p CoupleInfoSectionProps) {
+	@scroll.Section(
+		scroll.SectionProps{
+			ID: "info",
+		},
+	) {
+		<div class="text-center space-y-2">
+			@animate.Animate(animate.AnimateProps{Animation: "animate-fade animate-ease-in-out", Repeat: true}) {
+				<h2 class="text-2xl font-light text-gray-700 dark:text-gray-100">
+					Our Story
+				</h2>
+			}
+			@divider.Divider()
+		</div>
+		@scroll.Subsection() {
+			@animate.Animate(
+				animate.AnimateProps{
+					Animation: "animate-fade-left animate-ease-in-out",
+					Repeat:    true,
+				},
+			) {
+				@CoupleInfo(p.CoupleA)
+			}
+			@animate.Animate(
+				animate.AnimateProps{
+					Animation: "animate-fade-right animate-ease-in-out",
+					Repeat:    true,
+				},
+			) {
+				@CoupleInfo(p.CoupleB)
+			}
+		}
+		@scroll.Subsection(scroll.SubsectionProps{Class: "space-y-2"}) {
+			@animate.Animate(animate.AnimateProps{Animation: "animate-fade-down animate-ease-in-out", Repeat: true}) {
+				<p class="text-gray-700 dark:text-gray-100 text-sm text-center leading-relaxed">
+					{ p.Story }
+				</p>
+				@Carousel(p.StoryCarousel)
+			}
+		}
+		@scroll.Subsection() {
+			@animate.Animate(animate.AnimateProps{Animation: "animate-fade-up animate-ease-in-out", Repeat: true}) {
+				<p class="text-center text-primary text-md font-medium italic">Now we can't wait to start our forever together!</p>
+				@Gallery(p.Gallery)
+			}
+		}
+	}
+}
+
+type CoupleInfoProps struct {
+	BrideGroom string     `mapstructure:"bride_groom"`
+	Name       string     `mapstructure:"name"`
+	Image      ImageProps `mapstructure:"image"`
+	Mother     string     `mapstructure:"mother"`
+	Father     string     `mapstructure:"father"`
+}
+
+templ CoupleInfo(p CoupleInfoProps) {
+	@card.Card(card.Props{
+		Class: "text-center space-y-4",
+	}) {
+		@card.Content(card.ContentProps{
+			Class: "p-4",
+		}) {
+			<div class="relative">
+				<div class="w-32 h-32 mx-auto rounded-full overflow-hidden border border-primary">
+					<img
+						src={ p.Image.Src }
+						alt={ p.Image.Alt }
+						class="h-full w-full object-cover"
+					/>
+				</div>
+				<div class="absolute w-28 -bottom-2 left-1/2 transform -translate-x-1/2 bg-card px-4 py-2 rounded-full border border-primary">
+					<span class="text-primary text-sm font-medium">The { cases.Title(language.English).String(p.BrideGroom) }</span>
+				</div>
+			</div>
+			<div class="space-y-2 mt-4">
+				<h3 class="text-xl text-gray-700 dark:text-gray-100">
+					{ p.Name }
+				</h3>
+				<div class="space-y-0">
+					switch p.BrideGroom {
+						case "bride":
+							<p class="text-gray-700 dark:text-gray-100 text-sm leading-relaxed">
+								Daughter of 
+							</p>
+						case "groom":
+							<p class="text-gray-700 dark:text-gray-100 text-sm leading-relaxed">
+								Son of 
+							</p>
+						default:
+							<span>{ "Unknown info" }</span>
+					}
+					<p class="text-gray-700 dark:text-gray-100 text-sm leading-relaxed">
+						{ p.Father } & { p.Mother }
+					</p>
+				</div>
+			</div>
+		}
+	}
+}
+
+type CarouselProps struct {
+	Image []ImageProps `mapstructure:"image"`
+}
+
+templ Carousel(p CarouselProps) {
+	@carousel.Carousel(carousel.Props{
+		Autoplay: true,
+		Interval: 2500,
+		Loop:     true,
+	}) {
+		@carousel.Content() {
+			for _, nImage := range p.Image {
+				@carousel.Item() {
+					@card.Card() {
+						@card.Content() {
+							@aspectratio.AspectRatio(aspectratio.Props{
+								Ratio: aspectratio.RatioWide,
+								Class: "rounded-md overflow-hidden",
+							}) {
+								<img
+									src={ nImage.Src }
+									alt={ nImage.Alt }
+									class="h-full w-full object-cover"
+								/>
+							}
+						}
+					}
+				}
+			}
+		}
+		@carousel.Previous()
+		@carousel.Next()
+		@carousel.Indicators(carousel.IndicatorsProps{
+			Count: len(p.Image),
+		})
+	}
+}
+
+type GalleryProps struct {
+	FirstLine  ImageProps    `mapstructure:"first"`
+	SecondLine [2]ImageProps `mapstructure:"second"`
+	ThirdLine  ImageProps    `mapstructure:"third"`
+	FourthLine [3]ImageProps `mapstructure:"fourth"`
+}
+
+templ Gallery(p GalleryProps) {
+	<div class="grid grid-cols-3 gap-2 p-4">
+		@aspectratio.AspectRatio(aspectratio.Props{
+			Ratio: aspectratio.RatioWide,
+			Class: "col-span-3 row-span-2 rounded-md overflow-hidden",
+		}) {
+			<img
+				src={ p.FirstLine.Src }
+				alt={ p.FirstLine.Alt }
+				class="w-full h-full object-cover rounded-xl"
+			/>
+		}
+		@aspectratio.AspectRatio(aspectratio.Props{
+			Ratio: aspectratio.RatioPortrait,
+			Class: "col-start-1 col-span-1 row-span-2 rounded-md overflow-hidden",
+		}) {
+			<img
+				src={ p.SecondLine[0].Src }
+				alt={ p.SecondLine[0].Alt }
+				class="w-full h-full object-cover rounded-xl"
+			/>
+		}
+		@aspectratio.AspectRatio(aspectratio.Props{
+			Ratio: aspectratio.RatioAuto,
+			Class: "col-start-2 col-span-2 row-span-2 rounded-md overflow-hidden",
+		}) {
+			<img
+				src={ p.SecondLine[1].Src }
+				alt={ p.SecondLine[1].Alt }
+				class="w-full h-full object-cover rounded-xl"
+			/>
+		}
+		@aspectratio.AspectRatio(aspectratio.Props{
+			Ratio: aspectratio.RatioWide,
+			Class: "col-span-3 row-span-2 rounded-md overflow-hidden",
+		}) {
+			<img
+				src={ p.ThirdLine.Src }
+				alt={ p.ThirdLine.Alt }
+				class="w-full h-full object-cover rounded-xl"
+			/>
+		}
+		for _, nImage 	:= range p.FourthLine {
+			@aspectratio.AspectRatio(aspectratio.Props{
+				Ratio: aspectratio.RatioPortrait,
+				Class: "col-span-1 row-span-2 rounded-md overflow-hidden",
+			}) {
+				<img
+					src={ nImage.Src }
+					alt={ nImage.Alt }
+					class="w-full h-full object-cover rounded-xl"
+				/>
+			}
+		}
+	</div>
+}

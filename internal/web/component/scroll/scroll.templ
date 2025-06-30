@@ -1,0 +1,63 @@
+package scroll
+
+import "github.com/ditwrd/wed/internal/web/utils"
+
+type SectionProps struct {
+	ID    string
+	Class string
+}
+
+type SubsectionProps struct {
+	ID    string
+	Class string
+}
+
+templ Subsection(props ...SubsectionProps) {
+	{{ var p SubsectionProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={ utils.TwMerge("w-full max-w-prose text-left space-y-6 md:space-y-8 my-6", p.Class) }
+	>
+		{ children... }
+	</div>
+}
+
+templ Section(props ...SectionProps) {
+	{{ var p SectionProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<section
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={ utils.TwMerge("relative flex flex-col min-h-[110vh] w-full sm:max-w-160 items-center justify-center text-center px-8", p.Class) }
+	>
+		{ children... }
+	</section>
+}
+
+type ScrollProps struct {
+	ID    string
+	Class string
+}
+
+templ Scroll(props ...ScrollProps) {
+	{{ var p ScrollProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<section
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={ utils.TwMerge("relative flex flex-col min-h-screen w-full sm:max-w-160 items-center justify-center overflow-hidden gap-y-16 mb-20", p.Class) }
+	>
+		{ children... }
+	</section>
+}
