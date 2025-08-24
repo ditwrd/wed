@@ -32,7 +32,17 @@ templ InvitationModal(p InvitationModalProps, guest string) {
 							Ratio: aspectratio.RatioSquare,
 							Class: "rounded-md",
 						}) {
-							<img src={ p.Image.Src } alt={ p.Image.Alt } class="w-full h-full object-cover sm:rounded-r-lg"/>
+							<picture>
+								<source media="(min-width: 1280px)" srcset={ p.Image.Src + "=w1536" }/>
+								<source media="(min-width: 1024px)" srcset={ p.Image.Src + "=w1280" }/>
+								<source media="(min-width: 768px)" srcset={ p.Image.Src + "=w1024" }/>
+								<img
+									loading="lazy"
+									src={ p.Image.Src + "=w768" }
+									alt={ p.Image.Alt }
+									class="w-full h-full object-cover sm:rounded-r-lg"
+								/>
+							</picture>
 						}
 						<div class="sm:w-1/2 w-full flex flex-col justify-center items-stretch gap-4">
 							@card.Card(card.Props{Class: "h-full"}) {

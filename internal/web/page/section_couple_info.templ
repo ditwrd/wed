@@ -85,11 +85,17 @@ templ CoupleInfo(p CoupleInfoProps) {
 		}) {
 			<div class="relative">
 				<div class="w-32 h-32 mx-auto rounded-full overflow-hidden border border-primary">
-					<img
-						src={ p.Image.Src }
-						alt={ p.Image.Alt }
-						class="h-full w-full object-cover"
-					/>
+					<picture>
+						<source media="(min-width: 1280px)" srcset={ p.Image.Src + "=w1536" }/>
+						<source media="(min-width: 1024px)" srcset={ p.Image.Src + "=w1280" }/>
+						<source media="(min-width: 768px)" srcset={ p.Image.Src + "=w1024" }/>
+						<img
+							loading="lazy"
+							src={ p.Image.Src + "=w768" }
+							alt={ p.Image.Alt }
+							class="h-full w-full object-cover"
+						/>
+					</picture>
 				</div>
 				<div class="absolute w-28 -bottom-2 left-1/2 transform -translate-x-1/2 bg-card px-4 py-2 rounded-full border border-primary">
 					<span class="text-primary text-sm font-medium">The { cases.Title(language.English).String(p.BrideGroom) }</span>
@@ -140,11 +146,17 @@ templ Carousel(p CarouselProps) {
 								Ratio: aspectratio.RatioWide,
 								Class: "rounded-md overflow-hidden",
 							}) {
-								<img
-									src={ nImage.Src }
-									alt={ nImage.Alt }
-									class="h-full w-full object-cover"
-								/>
+								<picture>
+									<source media="(min-width: 1280px)" srcset={ nImage.Src + "=w1536" }/>
+									<source media="(min-width: 1024px)" srcset={ nImage.Src + "=w1280" }/>
+									<source media="(min-width: 768px)" srcset={ nImage.Src + "=w1024" }/>
+									<img
+										loading="lazy"
+										src={ nImage.Src + "=w768" }
+										alt={ nImage.Alt }
+										class="h-full w-full object-cover"
+									/>
+								</picture>
 							}
 						}
 					}
@@ -172,11 +184,18 @@ templ Gallery(p GalleryProps) {
 			Ratio: aspectratio.RatioWide,
 			Class: "col-span-3 row-span-2 rounded-md overflow-hidden",
 		}) {
-			<img
-				src={ p.FirstLine.Src }
-				alt={ p.FirstLine.Alt }
-				class="w-full h-full object-cover rounded-xl"
-			/>
+			<picture>
+				<source media="(min-width: 1280px)" srcset={ p.FirstLine.Src + "=w1536" }/>
+				<source media="(min-width: 1024px)" srcset={ p.FirstLine.Src + "=w1280" }/>
+				<source media="(min-width: 768px)" srcset={ p.FirstLine.Src + "=w1024" }/>
+				<img
+					loading="lazy"
+					src={ p.FirstLine.Src + "=w768" }
+					alt={ p.FirstLine.Alt }
+					class="h-full w-full object-cover"
+					class="w-full h-full object-cover rounded-xl"
+				/>
+			</picture>
 		}
 		@aspectratio.AspectRatio(aspectratio.Props{
 			Ratio: aspectratio.RatioPortrait,
@@ -187,37 +206,66 @@ templ Gallery(p GalleryProps) {
 				alt={ p.SecondLine[0].Alt }
 				class="w-full h-full object-cover rounded-xl"
 			/>
+			<picture>
+				<source media="(min-width: 1280px)" srcset={ p.SecondLine[0].Src + "=w1536" }/>
+				<source media="(min-width: 1024px)" srcset={ p.SecondLine[0].Src + "=w1280" }/>
+				<source media="(min-width: 768px)" srcset={ p.SecondLine[0].Src + "=w1024" }/>
+				<img
+					loading="lazy"
+					src={ p.SecondLine[0].Src + "=w768" }
+					alt={ p.SecondLine[0].Alt }
+					class="w-full h-full object-cover rounded-xl"
+				/>
+			</picture>
 		}
 		@aspectratio.AspectRatio(aspectratio.Props{
 			Ratio: aspectratio.RatioAuto,
 			Class: "col-start-2 col-span-2 row-span-2 rounded-md overflow-hidden",
 		}) {
-			<img
-				src={ p.SecondLine[1].Src }
-				alt={ p.SecondLine[1].Alt }
-				class="w-full h-full object-cover rounded-xl"
-			/>
+			<picture>
+				<source media="(min-width: 1280px)" srcset={ p.SecondLine[1].Src + "=w1536" }/>
+				<source media="(min-width: 1024px)" srcset={ p.SecondLine[1].Src + "=w1280" }/>
+				<source media="(min-width: 768px)" srcset={ p.SecondLine[1].Src + "=w1024" }/>
+				<img
+					loading="lazy"
+					src={ p.SecondLine[1].Src + "=w768" }
+					alt={ p.SecondLine[1].Alt }
+					class="w-full h-full object-cover rounded-xl"
+				/>
+			</picture>
 		}
 		@aspectratio.AspectRatio(aspectratio.Props{
 			Ratio: aspectratio.RatioWide,
 			Class: "col-span-3 row-span-2 rounded-md overflow-hidden",
 		}) {
-			<img
-				src={ p.ThirdLine.Src }
-				alt={ p.ThirdLine.Alt }
-				class="w-full h-full object-cover rounded-xl"
-			/>
+			<picture>
+				<source media="(min-width: 1280px)" srcset={ p.ThirdLine.Src + "=w1536" }/>
+				<source media="(min-width: 1024px)" srcset={ p.ThirdLine.Src + "=w1280" }/>
+				<source media="(min-width: 768px)" srcset={ p.ThirdLine.Src + "=w1024" }/>
+				<img
+					loading="lazy"
+					src={ p.ThirdLine.Src + "=w768" }
+					alt={ p.ThirdLine.Alt }
+					class="w-full h-full object-cover rounded-xl"
+				/>
+			</picture>
 		}
 		for _, nImage 	:= range p.FourthLine {
 			@aspectratio.AspectRatio(aspectratio.Props{
 				Ratio: aspectratio.RatioPortrait,
 				Class: "col-span-1 row-span-2 rounded-md overflow-hidden",
 			}) {
-				<img
-					src={ nImage.Src }
-					alt={ nImage.Alt }
-					class="w-full h-full object-cover rounded-xl"
-				/>
+				<picture>
+					<source media="(min-width: 1280px)" srcset={ nImage.Src + "=w1536" }/>
+					<source media="(min-width: 1024px)" srcset={ nImage.Src + "=w1280" }/>
+					<source media="(min-width: 768px)" srcset={ nImage.Src + "=w1024" }/>
+					<img
+						loading="lazy"
+						src={ nImage.Src + "=w768" }
+						alt={ nImage.Alt }
+						class="w-full h-full object-cover rounded-xl"
+					/>
+				</picture>
 			}
 		}
 	</div>
