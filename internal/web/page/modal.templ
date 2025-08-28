@@ -17,7 +17,7 @@ templ InvitationModal(p InvitationModalProps, guest string) {
 					x-transition:leave-start="opacity-100"
 					x-transition:leave-end="opacity-0"
 					@click="modalOpen=false"
-					class="absolute inset-0 w-full h-full bg-background bg-opacity-40"
+					class="absolute inset-0 w-full h-full bg-background bg-gradient-to-b from-rose-100 dark:from-primary to-background"
 				></div>
 				<div
 					x-trap.inert.noscroll="modalOpen"
@@ -37,7 +37,6 @@ templ InvitationModal(p InvitationModalProps, guest string) {
 								<source media="(min-width: 1024px)" srcset={ p.Image.Src + "=w1280" }/>
 								<source media="(min-width: 768px)" srcset={ p.Image.Src + "=w1024" }/>
 								<img
-									loading="lazy"
 									src={ p.Image.Src + "=w768" }
 									alt={ p.Image.Alt }
 									class="w-full h-full object-cover sm:rounded-r-lg"
