@@ -63,11 +63,11 @@ templ BaseLayout(p BaseLayoutProps) {
 			<meta property="og:title" content={ p.Title }/>
 			<meta property="og:description" content={ p.Description }/>
 			<meta property="og:image" content={ p.ImageUrl }/>
-			<script defer src="/static/alpine-intersect.min.js"></script>
-			<script defer src="/static/alpine-focus.min.js"></script>
-			<script defer src="/static/alpine.min.js"></script>
+			<script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/intersect@3.14.9/dist/cdn.min.js"></script>
+			<script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/focus@3.14.9/dist/cdn.min.js"></script>
+			<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.9/dist/cdn.min.js"></script>
 			<script defer src="/static/templui-htmx.min.js"></script>
-			<script src="/static/htmx.min.js"></script>
+			<script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.6/dist/htmx.min.js"></script>
 			@ThemeSwitcherScript()
 			@label.Script()
 			@input.Script()
