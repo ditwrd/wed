@@ -201,11 +201,6 @@ templ Gallery(p GalleryProps) {
 			Ratio: aspectratio.RatioPortrait,
 			Class: "col-start-1 col-span-1 row-span-2 rounded-md overflow-hidden",
 		}) {
-			<img
-				src={ p.SecondLine[0].Src }
-				alt={ p.SecondLine[0].Alt }
-				class="w-full h-full object-cover rounded-xl"
-			/>
 			<picture>
 				<source media="(min-width: 1280px)" srcset={ p.SecondLine[0].Src + "=w1536" }/>
 				<source media="(min-width: 1024px)" srcset={ p.SecondLine[0].Src + "=w1280" }/>
