@@ -51,8 +51,8 @@ templ CoupleInfoSection(p CoupleInfoSectionProps) {
 				@CoupleInfo(p.CoupleB)
 			}
 		}
-		@scroll.Subsection(scroll.SubsectionProps{Class: "space-y-2"}) {
-			@animate.Animate(animate.AnimateProps{Animation: "animate-fade-down animate-ease-in-out", Repeat: true}) {
+		@scroll.Subsection() {
+			@animate.Animate(animate.AnimateProps{Animation: "space-y-2 animate-fade-down animate-ease-in-out", Repeat: true}) {
 				<p class="text-gray-700 dark:text-gray-100 text-sm text-center leading-relaxed">
 					{ p.Story }
 				</p>
